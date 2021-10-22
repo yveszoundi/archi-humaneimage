@@ -1,0 +1,38 @@
+console.clear()
+console.show()
+
+load(__SCRIPTS_DIR__ + "lib/humaneimage.js")
+
+function writeFileToFolder(imageBase64, folder, filename) {
+  let Files = Java.type('java.nio.file.Files')
+  let Paths = Java.type('java.nio.file.Paths')
+  let Base64 = Java.type("java.util.Base64")
+
+  let imageBytes = Base64.getDecoder().decode(imageBase64)
+  let outputPath = Paths.get(folder, filename)
+  Files.write(outputPath, imageBytes)
+}
+
+function saveAllViews() {
+  let outputFolder = window.promptOpenDirectory({ title: "Select the images output folder" })
+
+  if (outputFolder) {
+    $('view').each(function(view) {
+      let outputFilename = (view.id + ".png")
+
+      if (view.type == 'archimate-diagram-model') {
+        let imageBase64String = humaneImage.renderViewAsBase64(view)
+        writeFileToFolder(imageBase64String, outputFolder, outputFilename)
+      } else {
+        let imageData = $.model.renderViewAsBase64(view, "PNG", {scale: 1, margin: 20})
+        writeFileToFolder(imageData, outputFolder, outputFilename)
+      }
+    })
+  } else {
+    console.log("No output folder selected, aborting..")
+  }
+}
+
+console.log("START> Export all views to humane images")
+saveAllViews()
+console.log("END> Export all views to humane images")

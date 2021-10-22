@@ -1,0 +1,26 @@
+#+TITLE: README
+
+* About
+
+This is a set of [[https://www.archimatetool.com/][Archi]] scripts and helpers for use with the [[https://github.com/archimatetool/archi-scripting-plugin][archi-scripting-plugin]].
+
+This repository acts as an additional backup system for me, in addition to making it easier to share files with others.
+
+* Notes
+
+** Compatability
+
+The scripts are only tested run with the GraalVM javascript engine with Archi 4.8.x and Archi 4.9.0.
+
+While it "should" run just fine under Windows, I am mostly working with Linux and MacOS.
+
+** File structure
+
+All the files in this repository are expected to be put at the root of your Archi scripts folder.
+
+
+** JavaScript style and compatability
+
+In some cases, it can be difficult to leverage the typical JavaScript libraries distributed via npm and CDNs.
+
+An easy workaround is simply to integrate with Java via reflection by loading external "standalone jars" (Archi is running under the JVM anyway).

@@ -1,0 +1,123 @@
+//  See https://gist.github.com/projetnumero9/21ec861797dd6f3fcc193f8221922e8e
+// Generate diagram legend 
+//  
+// 2020 David GERARD 
+//  
+// For a selected view, create a group named 'Legend', in which will be nested for each concepts type found in view
+// - a concept, specifically sized to show the pictogram
+// - a note, to be used to name or explain the concept specifically in the view, hence preventing to rename the concept
+// That way, 
+// - a model will be a bit polluted but with a specific set of concepts, for legend purpose, prefixed so easily identifiable
+// - the same set can be used in multiple views, multiples legends as the associated text is set in a side note
+// 
+// Roadmap:
+// - ask to delete an existing group name 'Legend' before create a new group
+// - improve typesList cleaning (removing types not concerned by legend) to avoid adding an exception 
+//
+  
+// # Functions
+
+// Get all unique values in a JavaScript array (remove duplicates): [Get all unique values in a JavaScript array (remove duplicates) - Stack Overflow](https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates)
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
+// # Variables  
+  
+var x = 10 ;  
+var y = 10 ;  
+var default_width = 30 ;
+var default_height = 30 ;
+var typesList = [] ;
+var pictogram_x = x + 10 ;
+var label_x = x + pictogram_x + 10 ;
+var label_width = default_width + 10 ;
+var groupWidth = 10 + default_width + 10 + default_width + 10 ;
+var groupHeight = default_height + y ;
+var prefix = "";
+var groupName = "Legend" ;
+var noteFigureType = 0 ;
+var noteOpacity = 0 ;
+var noteOutlineOpacity  = 0 ;
+
+// # Main
+console.show();  
+console.clear();  
+console.log("> Generate diagram legend:");  
+  
+var currentView  = $(selection).filter("archimate-diagram-model").first();//= selection.first();
+if (! currentView) {  
+    console.log("> No view identified: exiting.");  
+    exit();  
+}  
+
+// Loop through all elements used in selected view and pus into array elements type
+$(currentView).find().not("relationship").each(function(e) {
+    typesList.push(e.type);
+});
+
+// Alphabetically sort the array: [javascript - Sort objects in an array alphabetically on one property of the array - Stack Overflow](https://stackoverflow.com/questions/8900732/sort-objects-in-an-array-alphabetically-on-one-property-of-the-array)
+typesList.sort(function(a, b) {
+    var textA = a.toUpperCase();
+    var textB = b.toUpperCase();
+    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+});
+
+// Remove duplicates from the array
+typesList = typesList.filter(onlyUnique) ;
+
+// Remove from array types which are not concerned by the legend
+typesList = typesList.filter(function(item) {
+  return item !== 'diagram-model-group';
+});
+typesList = typesList.filter(function(item) {
+  return item !== 'diagram-model-note';
+});
+typesList = typesList.filter(function(item) {
+  return item !== 'diagram-model-connection';
+});
+typesList = typesList.filter(function(item) {
+  return item !== 'archimate-diagram-model';
+});
+
+// For each type found in the view
+for (var i=0; i<typesList.length; i++) {
+    // Search the corresponding standard element to be used for legend purpose
+    theConcept = $("."+prefix+typesList[i]).first() ;
+    if (!(theConcept)) {
+        var theConcept = model.createElement(typesList[i],prefix+typesList[i]);
+    };
+};    
+
+// Create the group with a default size and position, and name it
+var legendGroup = currentView.createObject("group", x, y, 10, 10, true) 
+legendGroup.name = groupName ;
+
+// Update 'y' value and groupHeight
+y += 30 ;
+groupHeight += 30 ;
+
+var maxWidth = groupWidth;
+
+for (var i=0; i<typesList.length; i++) {
+    pictogram = $("."+prefix+typesList[i]).first() ;
+    var pictogramName = pictogram.name;
+    pictogram.name = "";
+    var newLabelWidth = pictogramName.length * 10 + label_width;
+    maxWidth = Math.max(maxWidth, newLabelWidth)
+    // Update the group width and height to ensure autonesting will work
+    legendGroup.bounds =  {width: maxWidth, height: groupHeight};
+    // Add the concept sized specifically to illustrate pictogram, and a note to bear the text, both with autonesting
+    var object = currentView.add(pictogram, pictogram_x, y, default_width, default_height, true) ;
+    
+    var currentNote = currentView.createObject("note", pictogram_x + label_x, y, newLabelWidth, default_height, true) ;
+    currentNote.setFigureType(noteFigureType);
+    currentNote.opacity = noteOpacity ;
+    currentNote.outlineOpacity  = noteOutlineOpacity ;
+    currentNote.text = pictogramName;
+    // Update 'y' value and groupHeight
+    y += 40 ;
+    groupHeight += 40 ;
+}
+
+console.log("> Ending properly");

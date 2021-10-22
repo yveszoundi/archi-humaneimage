@@ -1,0 +1,34 @@
+//  
+// Generate diagram title
+//
+// # Variables
+let minX = 10   
+let minY = 10 
+let maxX = 0
+
+// # Main  
+    
+console.show();  
+console.clear();  
+console.log("START > Generate diagram title");  
+  
+var currentView  = $(selection).filter("archimate-diagram-model").first();
+if (! currentView) {  
+    console.log("> No view identified: exiting.");  
+    exit();  
+}  
+
+$(currentView).find().not("relationship").each(function(e) {
+  minX = Math.min(minX, e.bounds.x)
+  minY = Math.min(minY, e.bounds.y)
+  maxX = Math.max(maxX, e.bounds.x + e.bounds.width)
+})
+
+let noteWidth = Math.max(100, (maxX - minX))
+var currentNote = currentView.createObject("note", minX, minY - 40, noteWidth, 30, true) ;
+currentNote.text = currentView.name.toUpperCase()
+currentNote.borderType = 2 // no border
+currentNote.fontStyle = "bold";
+currentNote.textAlignment = 2 // Center
+
+console.log("END > Generate diagram title");  

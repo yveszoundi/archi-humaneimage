@@ -1,0 +1,15 @@
+// This is intented to remove the need of legends by annotating objects with their types
+
+console.show()
+console.clear()
+console.log("Start: Apply naming conventions")
+
+$(selection).each(function(element) {
+    if (element.type.endsWith("-relationship")) {
+        element.name = element.type.replaceAll("-relationship", "")
+    } else {
+        element.labelExpression = "${name}\n(${type})"
+    }
+});
+
+console.log("End: Apply naming conventions")
