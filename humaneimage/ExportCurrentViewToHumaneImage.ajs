@@ -1,7 +1,7 @@
 console.clear()
 console.show()
 
-load(__SCRIPTS_DIR__ + "lib/humaneimage.js")
+load(__SCRIPTS_DIR__ + "lib/humaneimage.lib.js")
 
 function saveCurrentView() {
   let currentView  = $(selection).filter("archimate-diagram-model").first()

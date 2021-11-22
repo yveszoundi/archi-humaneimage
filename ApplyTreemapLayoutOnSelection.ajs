@@ -31,6 +31,7 @@ if (typeof Java == null) {
 /** @type JavaClass */ const GroupWidget = Java.type('org.eclipse.swt.widgets.Group')
 /** @type JavaClass */ const ButtonWidget = Java.type('org.eclipse.swt.widgets.Button')
 /** @type JavaClass */ const GridData = Java.type('org.eclipse.swt.layout.GridData')
+/** @type JavaClass */ const RowData = Java.type('org.eclipse.swt.layout.RowData')
 /** @type JavaClass */ const GridLayout = Java.type('org.eclipse.swt.layout.GridLayout')
 /** @type JavaClass */ const GridDataFactory = Java.type('org.eclipse.jface.layout.GridDataFactory')
 /** @type JavaClass */ const GridLayoutFactory = Java.type('org.eclipse.jface.layout.GridLayoutFactory')
@@ -131,7 +132,9 @@ let cfgDialog = {
             for (let x of cfg.layoutValues) {
                 cfgDialog.createWidget(null, ButtonWidget, group, null,
                                        (w) => {
-                                           w.setText(x)
+                                         w.setText(x)
+                                         let wh = w.computeSize(300, SWT.DEFAULT).y
+                                         w.setLayoutData(new RowData(300, wh))
                                        }, SWT.RADIO)
             }
             group.getChildren()[0].setSelection(true)
