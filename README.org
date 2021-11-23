@@ -8,7 +8,9 @@ This repository acts as an additional backup system for me, in addition to makin
 
 * Notes
 
-** Compatability
+I did not write all the scripts. Some of them come were contributed by the [[https://gist.github.com/search?utf8=%E2%9C%93&q=%23jarchi+extension%3Aajs&ref=searchresults][jArchi community]]. My main focus is on the "humaneimage" script.
+
+** Compatibility
 
 The scripts are only tested run with the GraalVM javascript engine with Archi 4.8.x and Archi 4.9.0.
 
