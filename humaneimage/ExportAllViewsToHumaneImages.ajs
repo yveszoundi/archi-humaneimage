@@ -21,7 +21,7 @@ function saveAllViews() {
       let outputFilename = (view.id + ".png")
 
       if (view.type == 'archimate-diagram-model') {
-        let imageBase64String = humaneImage.renderViewAsBase64(view)
+        let imageBase64String = humaneImage.renderViewAsBase64(view, { debug: false, format: 'png' })
         writeFileToFolder(imageBase64String, outputFolder, outputFilename)
       } else {
         let imageData = $.model.renderViewAsBase64(view, "PNG", {scale: 1, margin: 20})

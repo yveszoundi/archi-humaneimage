@@ -1,0 +1,229 @@
+console.clear()
+console.show()
+
+load(__SCRIPTS_DIR__ + "lib/humaneimage.lib.js")
+
+if (typeof Java == null) {
+  /**
+   * @type {{type: (s: string) => JavaClass, extend: (c: JavaClass) => JavaClass, super: (o: JavaObject) => JavaObject }}
+   */
+  var Java
+  var shell
+}
+
+
+/** @type JavaClass */ const SWT = Java.type('org.eclipse.swt.SWT')
+/** @type JavaClass */ const TextWidget = Java.type('org.eclipse.swt.widgets.Text')
+/** @type JavaClass */ const LabelWidget = Java.type('org.eclipse.swt.widgets.Label')
+/** @type JavaClass */ const CompositeWidget = Java.type('org.eclipse.swt.widgets.Composite')
+/** @type JavaClass */ const SpinnerWidget = Java.type('org.eclipse.swt.widgets.Spinner')
+/** @type JavaClass */ const GroupWidget = Java.type('org.eclipse.swt.widgets.Group')
+/** @type JavaClass */ const ButtonWidget = Java.type('org.eclipse.swt.widgets.Button')
+/** @type JavaClass */ const GridData = Java.type('org.eclipse.swt.layout.GridData')
+/** @type JavaClass */ const RowData = Java.type('org.eclipse.swt.layout.RowData')
+/** @type JavaClass */ const GridLayout = Java.type('org.eclipse.swt.layout.GridLayout')
+/** @type JavaClass */ const GridDataFactory = Java.type('org.eclipse.jface.layout.GridDataFactory')
+/** @type JavaClass */ const GridLayoutFactory = Java.type('org.eclipse.jface.layout.GridLayoutFactory')
+/** @type JavaClass */ const RowLayoutFactory = Java.type('org.eclipse.jface.layout.RowLayoutFactory')
+/** @type JavaClass */ const RowLayout = Java.type('org.eclipse.swt.layout.RowLayout')
+/** @type JavaClass */ const IMessageProvider = Java.type('org.eclipse.jface.dialogs.IMessageProvider')
+/** @type JavaClass */ const TitleAreaDialog = Java.type("org.eclipse.jface.dialogs.TitleAreaDialog")
+
+const ConfigDialog = Java.extend(TitleAreaDialog)
+
+let cfgDialog = {
+
+  /**
+   * Default values
+   */
+  config: {
+    formatValues: ["png", "svg"],
+    debugValues: ["yes", "no"],
+    dumpSvgValues: ["yes", "no"],
+    debug: "no",
+    dumpSvg: "no",
+    format: "png",
+    imgBackgroundColor: "#ffffff",
+    debug: false
+  },
+
+  // widgets memorized to get value from before closing
+  widgets: {},
+
+  /**
+   * Helper to create a widget
+   *
+   * @param {string} name - The widget name
+   * @param {JavaClass} widgetClass - the Java widget class
+   * @param {JavaObject} c - The container
+   * @param {string} label - the label if any for the widget. A Label widget will be created if necessary
+   * @param {(...a: any) => void} init - a function to finalize initialisation (value, etc )
+   */
+  createWidget: function (name, widgetClass, c, label, init, flags = SWT.BORDER) {
+    if (label != null) {
+      let txt = new LabelWidget(c, SWT.NONE)
+      txt.setText(label)
+      GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(txt)
+    }
+    let widget = new widgetClass(c, flags)
+    if (init != null) init(widget)
+    // saving in widgets reference array
+    if (name != null) this.widgets[name] = widget
+  },
+
+  /**
+   * as open() will destroy the widgets on close, saving values to config
+   */
+  saveInput: function () {
+
+    /** no simpler way to get the selected radio button in a group :-(
+     * @param {JavaObject} g - a group control
+     * @returns - the selected radio button text
+     */
+    function getRadioGroupSelectedValue(g) {
+      for (let r of g.getChildren()) {
+        if (r.getSelection()) {
+          return r.getText()
+        }
+      }
+    }
+
+    this.config.format = getRadioGroupSelectedValue(this.widgets.formatValues)
+    this.config.dumpSvg = (getRadioGroupSelectedValue(this.widgets.dumpSvgValues) == "yes")
+    this.config.debug = (getRadioGroupSelectedValue(this.widgets.debugValues) =="yes")
+    this.config.imgBackgroundColor = this.widgets.imgBackgroundColor.getText().trim()
+  },
+
+
+  open: function() {
+    return (this.dialog.open() == 0)  // OK = 0, Cancel = 1, Closed = -1
+  },
+
+  // NB: Nashorn specific JS syntax! (like java anonymous function)
+  // also not possible to define anything else than inherited method to override. No new method, no property
+  dialog: new ConfigDialog(shell) {
+
+    create: function () {
+      Java.super(cfgDialog.dialog).create()
+      cfgDialog.dialog.setTitle("Humane Image export configuration")
+    },
+
+    createDialogArea: function (parent) {
+      var cfg = cfgDialog.config
+      let area = Java.super(cfgDialog.dialog).createDialogArea(parent)
+      // the area contains an horizontal sep, and a grid layout
+      let container = new CompositeWidget(area, SWT.NONE)
+      GridDataFactory.swtDefaults().align(SWT.FILL, SWT.BEGINNING).applyTo(container)
+      GridLayoutFactory.swtDefaults().numColumns(2).margins(10,10).spacing(10, 5).applyTo(container)
+
+      // layout options
+      let group = new GroupWidget(container, SWT.NONE)
+      GridDataFactory.swtDefaults().span(2,1).grab(true, false).align(SWT.FILL, SWT.FILL).applyTo(group)
+      group.setText('Image format')
+      GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).applyTo(group)
+      cfgDialog.widgets.formatValues = group
+      for (let x of cfg.formatValues) {
+        cfgDialog.createWidget(null, ButtonWidget, group, null,
+                               (w) => {
+                                 w.setText(x)
+                                 let wh = w.computeSize(300, SWT.DEFAULT).y
+                                 w.setLayoutData(new GridData(300, wh))
+                               }, SWT.RADIO)
+      }
+      group.getChildren()[0].setSelection(true)
+
+      group = new GroupWidget(container, SWT.NONE)
+      GridDataFactory.swtDefaults().span(2,1).grab(true, false).align(SWT.FILL, SWT.FILL).applyTo(group)
+      GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).applyTo(group)
+      cfgDialog.widgets.debugValues = group
+      group.setText('Enable debug messages')
+      for (let x of cfg.debugValues) {
+        cfgDialog.createWidget(null, ButtonWidget, group, null,
+                               (w) => {
+                                 w.setText(x)
+                                 let wh = w.computeSize(300, SWT.DEFAULT).y
+                                 w.setLayoutData(new GridData(300, wh))
+                               }, SWT.RADIO)
+      }
+      group.getChildren()[1].setSelection(true)
+
+      group = new GroupWidget(container, SWT.NONE)
+      GridDataFactory.swtDefaults().span(2,1).grab(true, false).align(SWT.FILL, SWT.FILL).applyTo(group)
+      GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).applyTo(group)
+      cfgDialog.widgets.dumpSvgValues = group
+      group.setText('Enable SVG dump in console')
+      for (let x of cfg.dumpSvgValues) {
+        cfgDialog.createWidget(null, ButtonWidget, group, null,
+                               (w) => {
+                                 w.setText(x)
+                                 let wh = w.computeSize(300, SWT.DEFAULT).y
+                                 w.setLayoutData(new GridData(300, wh))
+                               }, SWT.RADIO)
+      }
+      group.getChildren()[1].setSelection(true)
+
+      // Padding options
+      group = new GroupWidget(container, SWT.NONE)
+      GridDataFactory.swtDefaults().span(2,0).grab(true, false).align(SWT.FILL, SWT.FILL).applyTo(group)
+      //GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).applyTo(group)
+      group.setText("Background - hex value (i.e. '#ffffff') or empty for transparency")
+      GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(false).applyTo(group)
+      cfgDialog.createWidget('imgBackgroundColor', TextWidget, group, "Image background color",
+                             (w) => {
+                               let wh = w.computeSize(300, SWT.DEFAULT).y
+                               w.setLayoutData(new GridData(300, wh))
+                               w.setText(cfg.imgBackgroundColor)
+                               w.setMessage('Leave empty for a transparent background')
+                             })
+
+      return area
+    },
+
+    okPressed: function() {
+      cfgDialog.saveInput()
+      Java.super(cfgDialog.dialog).okPressed()
+    }
+  }
+}
+
+function saveCurrentView(opts) {
+  let currentView  = $(selection).filter("archimate-diagram-model").first()
+  currentView = (currentView == null) ? $(selection).first().view : currentView
+  let proposedFileName = currentView.name + "." + opts.format
+  let outputLocation = window.promptSaveFile({'title': 'Save image as', 'filterExtensions': ['.' + opts.format], 'fileName': proposedFileName })
+
+  if (outputLocation) {
+    let Files = Java.type('java.nio.file.Files')
+    let Paths = Java.type('java.nio.file.Paths')
+    let Base64 = Java.type("java.util.Base64")
+
+    let imageBase64String = humaneImage.renderViewAsBase64(currentView, {
+      debug              : opts.debug,
+      format             : opts.format,
+      imgBackgroundColor : opts.imgBackgroundColor,
+      dumpSvg            : opts.dumpSvg
+    })
+    let imageBytes = Base64.getDecoder().decode(imageBase64String)
+    let outputPath = Paths.get(outputLocation)
+
+    Files.write(outputPath, imageBytes)
+  } else {
+    console.log("No output file selected, aborting..")
+  }
+}
+
+
+// Test
+console.clear()
+console.show()
+
+console.log("START> Export view to humane image")
+
+if (cfgDialog.open()) {
+  saveCurrentView(cfgDialog.config)
+  console.log("END> Export to humane image")
+} else {
+  console.log("END> Export to humane image aborted")
+}
+
+
