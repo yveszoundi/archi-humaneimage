@@ -2,21 +2,20 @@
 
 * What is this?
 
-This is a set of [[https://www.archimatetool.com/][Archi]] scripts in order to generate =simple humane images= from [[https://en.wikipedia.org/wiki/ArchiMate][Archimate]] diagrams.
-- Design like an Architect with Archimate conventions (or custom conventions)
-- Share diagrams with human beings: =What does this icon mean???=
+This is a set of [[https://www.archimatetool.com/][Archi]] scripts for generating =simple humane images= from [[https://en.wikipedia.org/wiki/ArchiMate][Archimate]] diagrams:
+- Design with the Archimate modelling language notation
+- Share diagrams containing just =lines and rectangles= (no special figures)
 
 [[./images/to_humane_image_scaled.png]]
 
 
-*This is not meant to export Archimate free-drawing views (Canvas or Sketch diagrams).*
+/*This is not meant to export Archimate free-drawing views (Canvas or Sketch diagrams).*/
 
 * Requirements
 
 - Archi 4.9.x (this has only been tested with the latest version of
 - The latest version of [[https://www.archimatetool.com/plugins/#jArchi][jArchi]] compatible with Archi 4.9.x
 - The [[https://www.graalvm.org/][GraalVM]] JavaScript engine selected in Archi preferences (=Scripting > JavaScript Engine=)
-
 
 * How to use it?
 
@@ -29,7 +28,7 @@ You can then right-click on any diagram in Archi and explore available scripts (
 
 ** Overall process
 
-There's just a little bit of custom drawing happening with few hooks into Java instead of "pure JavaScript".
+There's just a little bit of custom drawing happening with few hooks into Java, instead of "pure JavaScript".
 
 [[./images/humane_image_process.png]]
 
@@ -51,6 +50,6 @@ The best way to contribute is via a pull request.
 
 * Notes
 
-I did not write the whole functionality from scratch.
-- =edraw2d.lib.jar= is a utility class with a *subset* of [[https://github.com/eclipse/gef-legacy/tree/master/org.eclipse.draw2d][Eclipse draw2d libraries]] (bare minimum classes required, repackaged without SWT dependencies)
+I did not write the whole functionality from scratch:
+- =edraw2d.lib.jar= is a utility class with a *subset* of [[https://github.com/eclipse/gef-legacy/tree/master/org.eclipse.draw2d][Eclipse draw2d classes]] (no [[https://www.eclipse.org/swt/][SWT]] dependencies)
 - =svgtopng.lib.jar= is a utility class with bundled [[https://xmlgraphics.apache.org/batik/][Apache Batik]] dependencies
