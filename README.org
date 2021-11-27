@@ -2,11 +2,14 @@
 
 * What is this?
 
-This is a set of [[https://www.archimatetool.com/][Archi]] scripts in order to generate simple =humane images= from [[https://en.wikipedia.org/wiki/ArchiMate][Archimate]] diagrams (plain rectangles and lines).
+This is a set of [[https://www.archimatetool.com/][Archi]] scripts in order to generate =simple humane images= from [[https://en.wikipedia.org/wiki/ArchiMate][Archimate]] diagrams.
 - Design like an Architect with Archimate conventions (or custom conventions)
 - Share diagrams with human beings: =What does this icon mean???=
 
 [[./images/to_humane_image_scaled.png]]
+
+
+*This is not meant to export Archimate free-drawing views (Canvas or Sketch diagrams).*
 
 * Requirements
 
