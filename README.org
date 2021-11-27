@@ -1,28 +1,53 @@
 #+TITLE: README
 
-* About
+* What is this?
 
-This is a set of [[https://www.archimatetool.com/][Archi]] scripts and helpers for use with the [[https://github.com/archimatetool/archi-scripting-plugin][archi-scripting-plugin]].
+This is a set of [[https://www.archimatetool.com/][Archi]] scripts in order to generate simple =humane images= from [[https://en.wikipedia.org/wiki/ArchiMate][Archimate]] diagrams (plain rectangles and lines).
+- Design like an Architect with Archimate conventions (or custom conventions)
+- Share diagrams with human beings: =What does this icon mean???=
 
-This repository acts as an additional backup system for me, in addition to making it easier to share files with others.
+[[./images/to_humane_image_scaled.png]]
+
+* Requirements
+
+- Archi 4.9.x (this has only been tested with the latest version of
+- The latest version of [[https://www.archimatetool.com/plugins/#jArchi][jArchi]] compatible with Archi 4.9.x
+- The [[https://www.graalvm.org/][GraalVM]] JavaScript engine selected in Archi preferences (=Scripting > JavaScript Engine=)
+
+
+* How to use it?
+
+Please clone this repository under your jArchi scripts folder (=Preferences >Scriting > Scripts folder:=): if you still don't understand the procedure, please visit the [[https://github.com/archimatetool/archi-scripting-plugin/wiki/jArchi-Quick-Start][jArchi wiki]] or [[https://forum.archimatetool.com/index.php?board=5.0][forum]].
+
+You can then right-click on any diagram in Archi and explore available scripts (=Scripts > humaneimage=).
+
+* How does it work?
+
+
+** Overall process
+
+There's just a little bit of custom drawing happening with few hooks into Java instead of "pure JavaScript".
+
+[[./images/humane_image_process.png]]
+
+** Scripts description
+
+The main library is under =lib/humaneimage.lib.js= and the scripts under the =humageimage= folder are just interfaces to it.
+
+|---------------------------------------------------+------------------------------------------------|
+| Script                                            | Description                                    |
+|---------------------------------------------------+------------------------------------------------|
+| =ExportAllViewsToHumaneImages.ajs=                | Export all model diagrams to =humane images=   |
+| =ExportCurrentViewToHumaneImage_Cfg_Default.ajs=  | Export the current diagram to a =humane image= |
+| =ExportCurrentViewToHumaneImage_Cfg_Override.ajs= | Same as the above with options dialog          |
+|---------------------------------------------------+------------------------------------------------|
+
+* Contributing
+
+The best way to contribute is via a pull request.
 
 * Notes
 
-I did not write all the scripts. Some of them come were contributed by the [[https://gist.github.com/search?utf8=%E2%9C%93&q=%23jarchi+extension%3Aajs&ref=searchresults][jArchi community]]. My main focus is on the "humaneimage" script.
-
-** Compatibility
-
-The scripts are only tested run with the GraalVM javascript engine with Archi 4.8.x and Archi 4.9.0.
-
-While it "should" run just fine under Windows, I am mostly working with Linux and MacOS.
-
-** File structure
-
-All the files in this repository are expected to be put at the root of your Archi scripts folder.
-
-
-** JavaScript style and compatability
-
-In some cases, it can be difficult to leverage the typical JavaScript libraries distributed via npm and CDNs.
-
-An easy workaround is simply to integrate with Java via reflection by loading external "standalone jars" (Archi is running under the JVM anyway).
+I did not write the whole functionality from scratch.
+- =edraw2d.lib.jar= is a utility class with a *subset* of [[https://github.com/eclipse/gef-legacy/tree/master/org.eclipse.draw2d][Eclipse draw2d libraries]] (bare minimum classes required, repackaged without SWT dependencies)
+- =svgtopng.lib.jar= is a utility class with bundled [[https://xmlgraphics.apache.org/batik/][Apache Batik]] dependencies
