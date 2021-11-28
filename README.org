@@ -51,5 +51,5 @@ The best way to contribute is via a pull request.
 * Notes
 
 I did not write the whole functionality from scratch:
-- =edraw2d.lib.jar= is a utility class with a *subset* of [[https://github.com/eclipse/gef-legacy/tree/master/org.eclipse.draw2d][Eclipse draw2d classes]] (no [[https://www.eclipse.org/swt/][SWT]] dependencies)
-- =svgtopng.lib.jar= is a utility class with bundled [[https://xmlgraphics.apache.org/batik/][Apache Batik]] dependencies
+- [[https://github.com/yveszoundi/edraw2d][edraw2d.lib.jar]] is a utility class with a *subset* of [[https://github.com/eclipse/gef-legacy/tree/master/org.eclipse.draw2d][Eclipse draw2d classes]] (no [[https://www.eclipse.org/swt/][SWT]] dependencies)
+- [[https://github.com/yveszoundi/svg2png][svgtopng.lib.jar]] is a utility class with bundled [[https://xmlgraphics.apache.org/batik/][Apache Batik]] dependencies
