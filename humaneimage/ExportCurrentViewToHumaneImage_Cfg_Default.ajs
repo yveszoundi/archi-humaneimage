@@ -6,15 +6,16 @@ load(__SCRIPTS_DIR__ + "lib/humaneimage.lib.js")
 function saveCurrentView() {
   let currentView  = $(selection).filter("archimate-diagram-model").first()
   currentView = (currentView == null) ? $(selection).first().view : currentView
-  let proposedFileName = currentView.name + ".png"
-  let outputLocation = window.promptSaveFile({'title': 'Save image as', 'filterExtensions': ['.png'], 'fileName': proposedFileName })
+  let outputFormat = "png"
+  let proposedFileName = currentView.name + "." + outputFormat
+  let outputLocation = window.promptSaveFile({'title': 'Save image as', 'filterExtensions': ['.' + outputFormat], 'fileName': proposedFileName })
 
   if (outputLocation) {
     let Files = Java.type('java.nio.file.Files')
     let Paths = Java.type('java.nio.file.Paths')
     let Base64 = Java.type("java.util.Base64")
 
-    let imageBase64String = humaneImage.renderViewAsBase64(currentView, { debug: false, format: 'png' })
+    let imageBase64String = humaneImage.renderViewAsBase64(currentView, { debug: false, format: outputFormat })
     let imageBytes = Base64.getDecoder().decode(imageBase64String)
     let outputPath = Paths.get(outputLocation)
 
