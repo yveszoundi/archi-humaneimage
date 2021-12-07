@@ -189,6 +189,10 @@ let cfgDialog = {
 function saveCurrentView(opts) {
   let currentView  = $(selection).filter("archimate-diagram-model").first()
   currentView = (currentView == null) ? $(selection).first().view : currentView
+
+  if (currentView == null)
+    throw new Error("Cannot find a regular archimate diagram to export (i.e. not a sketch or canvas).")
+
   let proposedFileName = currentView.name + "." + opts.format
   let outputLocation = window.promptSaveFile({'title': 'Save image as', 'filterExtensions': ['.' + opts.format], 'fileName': proposedFileName })
 
@@ -220,10 +224,16 @@ console.show()
 console.log("START> Export view to humane image")
 
 if (cfgDialog.open()) {
-  saveCurrentView(cfgDialog.config)
-  console.log("END> Export to humane image")
+  try {
+    saveCurrentView(cfgDialog.config)
+  } catch (e) {
+    console.log("ERROR:", e.message)
+  }
 } else {
-  console.log("END> Export to humane image aborted")
+  console.log("Export view to humane image aborted")
 }
+
+console.log("END> Export to humane image")
+
 
 
