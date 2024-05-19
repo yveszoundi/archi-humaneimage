@@ -1,7 +1,7 @@
 console.clear()
 console.show()
 
-load(__SCRIPTS_DIR__ + "lib/humaneimage.lib.js")
+load(__SCRIPTS_DIR__ + "archi-humaneimage/lib/humaneimage.lib.js")
 
 function writeFileToFolder(imageBase64, folder, filename) {
   let Files = Java.type('java.nio.file.Files')
