@@ -28,11 +28,17 @@ You can then right-click on any diagram in Archi and explore available scripts (
 * How does it work?
 
 
-** Overall process
+** PNG export
 
 There's just a little bit of custom drawing happening with few hooks into Java, instead of "pure JavaScript".
 
 [[./images/humane_image_process.png]]
+
+** PowerPoint export
+
+This generates PowerPoint shapes and the deck can be changed easily by non-technical users (accordingly to the audience and message to convey).
+
+[[./images/to_ppt.jpg]]
 
 ** Scripts description
 
