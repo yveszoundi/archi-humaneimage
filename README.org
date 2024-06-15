@@ -13,9 +13,11 @@ This is a set of [[https://www.archimatetool.com/][Archi]] scripts for generatin
 
 * Requirements
 
-- Archi 4.9.x (this has only been tested with the latest version of
-- The latest version of [[https://www.archimatetool.com/plugins/#jArchi][jArchi]] compatible with Archi 4.9.x
-- The [[https://www.graalvm.org/][GraalVM]] JavaScript engine selected in Archi preferences (=Scripting > JavaScript Engine=)
+- Archi 4.9.x or later
+- The latest version of [[https://www.archimatetool.com/plugins/#jArchi][jArchi]] compatible with Archi 4.9.x or later
+- The [[https://www.graalvm.org/][GraalVM]] JavaScript engine selected in =Archi= preferences (=Scripting > JavaScript Engine=)
+  - This is not required for recent versions of =Archi=, as =GraalVM= is now the default JavaScript engine
+  - Please note that supporting =Java= code is loaded by =Archi= scripts
 
 * How to use it?
 
@@ -42,6 +44,8 @@ The main library is under =lib/humaneimage.lib.js= and the scripts under the =hu
 | =ExportAllViewsToHumaneImages.ajs=                | Export all model diagrams to =humane images=   |
 | =ExportCurrentViewToHumaneImage_Cfg_Default.ajs=  | Export the current diagram to a =humane image= |
 | =ExportCurrentViewToHumaneImage_Cfg_Override.ajs= | Same as the above with options dialog          |
+| =ExportCurrentViewToPowerPoint.ajs=               | Export a view to PowerPoint (=pptx= format)    |
+| =ExportToHumaneImageModel.ajs=                    | Export a view model for custom processing      |
 |---------------------------------------------------+------------------------------------------------|
 
 * Contributing
@@ -53,3 +57,4 @@ The best way to contribute is via a pull request.
 I did not write the whole functionality from scratch:
 - [[https://github.com/yveszoundi/edraw2d][edraw2d.lib.jar]] is a utility class with a *subset* of [[https://github.com/eclipse/gef-legacy/tree/master/org.eclipse.draw2d][Eclipse draw2d classes]] (no [[https://www.eclipse.org/swt/][SWT]] dependencies)
 - [[https://github.com/yveszoundi/svg2png][svgtopng.lib.jar]] is a utility class with bundled [[https://xmlgraphics.apache.org/batik/][Apache Batik]] dependencies
+- =archi2ppt.lib.jar= is a utility class leveraging Apache POI to generate PowerPoint files
