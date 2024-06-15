@@ -1,0 +1,38 @@
+console.clear()
+console.show()
+
+load(__SCRIPTS_DIR__ + "archi-humaneimage/lib/humaneimage-model.lib.js")
+Java.addToClasspath(__SCRIPTS_DIR__ + "archi-humaneimage/lib/archi2ppt.lib.jar")
+
+function saveCurrentView() {
+  let currentView  = $(selection).filter("archimate-diagram-model").first()
+  currentView = (currentView == null) ? $(selection).first().view : currentView
+
+  if (currentView == null)
+    throw new Error("Cannot find a regular archimate diagram to export(i.e. not a sketch or canvas).")
+
+  let diagram_model = humaneImageModel.diagram(currentView, { debug: false })
+
+  let outputLocation = window.promptSaveFile({'title': 'Save diagram as', 'filterExtensions': ['.pptx'], 'fileName': "test.pptx" })
+
+  if (outputLocation) {
+    let JArchiToPowerPoint = Java.type("archi2ppt.ArchiToPowerPoint")
+    let data = JSON.stringify(diagram_model, null, 2)
+    JArchiToPowerPoint.exportDeck(data, outputLocation)
+    console.log("Successfully exported the diagram to PowerPoint!")
+  } else {
+    console.log("No output file selected, aborting..")
+  }
+
+  console.log()
+}
+
+console.log("START: ExportCurrentViewToPowerPoint")
+
+try {
+  saveCurrentView()
+} catch (e) {
+  console.log("ERROR:", e.message)
+}
+
+console.log("END: ExportCurrentViewToPowerPoint")

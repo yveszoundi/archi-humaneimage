@@ -1,0 +1,42 @@
+console.clear()
+console.show()
+
+load(__SCRIPTS_DIR__ + "archi-humaneimage/lib/humaneimage-model.lib.js")
+
+function saveCurrentView() {
+  let currentView  = $(selection).filter("archimate-diagram-model").first()
+  currentView = (currentView == null) ? $(selection).first().view : currentView
+
+  if (currentView == null)
+    throw new Error("Cannot find a regular archimate diagram to export(i.e. not a sketch or canvas).")
+
+  let diagram_model = humaneImageModel.diagram(currentView, { debug: false })
+
+  let outputLocation = window.promptSaveFile({'title': 'Save model as', 'filterExtensions': ['.json'], 'fileName': "test.json" })
+
+  if (outputLocation) {
+    let Files = Java.type('java.nio.file.Files')
+    let Paths = Java.type('java.nio.file.Paths')
+    let Base64 = Java.type("java.util.Base64")
+    let JString = Java.type("java.lang.String")
+
+    let data = JSON.stringify(diagram_model, null, 2)
+    let outputPath = Paths.get(outputLocation)
+
+    Files.write(outputPath, new JString(data).getBytes("UTF-8"))
+  } else {
+    console.log("No output file selected, aborting..")
+  }
+
+  console.log()
+}
+
+console.log("START> Export view to humane image")
+
+try {
+  saveCurrentView()
+} catch (e) {
+  console.log("ERROR:", e.message)
+}
+
+console.log("END> Export to humane image")
